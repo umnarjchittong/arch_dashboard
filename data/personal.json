@@ -1,0 +1,27 @@
+{
+    "personals": 51,
+    "teacher": 35,
+    "teacher_degree": {
+        "doctor": 13,
+        "master": 22,
+        "bechelor": 0,
+        "professor": 0,
+        "assoc_prof": 4,
+        "assist_prof": 14,
+        "none": 17
+    },
+    "officer": 16,
+    "officer_degree": {
+        "doctor": 0,
+        "master": 10,
+        "bechelor": 4,
+        "under_bechelor": 2,
+        "none": 3,
+        "operating": 9,
+        "chief": 4
+    },
+    "personal_type": {
+        "university_employee": 13,
+        "department_employee": 3
+    }
+}

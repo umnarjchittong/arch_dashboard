@@ -18,6 +18,7 @@ class Constants
     public $month_fullname = array(1 => "มกราคม", 2 => "กุมภาพันธ์", 3 => "มีนาคม", 4 => "เมษายน", 5 => "พฤษภาคม", 6 => "มิถุนายน", 7 => "กรกฎาคม", 8 => "สิงหาคม", 9 => "กันยายน", 10 => "ตุลาคม", 11 => "พฤศจิกายน", 12 => "ธันวาคม");
     public $auth_lv = array("1" => "guest", "3" => "Member", "5" => "board", "7" => "officer", "9" => "developer");
     public $list_limit = 20;
+    public $department = array("ar" => "1904", "la" => "1901", "lt" => "1902", "mep" => "1903", "murp" => "1905");
 }
 
 class CommonFnc extends Constants
@@ -807,6 +808,32 @@ class MJU_API extends CommonFnc
             }
         }
         return $result;
+    }
+
+    public function gen_array_filter_instr($array, $key, $value)
+    {
+        $expected = array_filter($array, function ($var) use ($value) {
+            global $key;
+            if (strpos($var[$key], $value) !== false) {
+                echo $var[$key];
+                return true;
+            }
+        });
+        return ($expected);
+    }
+
+    public function get_array_filter()
+    {
+        $json = '[{"name":"Juar","Sex":"Male","ID":"1100"},{"name":"Maria","Sex":"Female","ID":"2513"},{"name":"Pedro","Sex":"Male","ID":"2211"}]';
+        $array = json_decode($json, 1);
+        $ID = "ar";
+        $expected = array_filter($array, function ($var) use ($ID) {
+            if (strpos($var['name'], $ID) !== false) {
+                echo $var['name'];
+                return true;
+            }
+        });
+        print_r($expected);
     }
 
     public function get_array_filters($array, $key1, $value1, $key2 = null, $value2 = null, $key3 = null, $value3 = null, $key4 = null, $value4 = null, $key5 = null, $value5 = null)

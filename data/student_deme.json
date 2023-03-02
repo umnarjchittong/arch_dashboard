@@ -1,0 +1,51 @@
+{
+    "students": {
+        "finish": "500,500",
+        "studying": "60,100",
+        "bechelor": "55,95",
+        "bechelor_department": {
+            "ar": "10,100",
+            "ar_class": {
+                "ar_year_1": "10,20",
+                "ar_year_2": "10,20",
+                "ar_year_3": "10,20",
+                "ar_year_4": "10,20",
+                "ar_year_5": "10,20"
+            },
+            "la": "50,100",
+            "la_class": {
+                "la_year_1": "10,20",
+                "la_year_2": "10,20",
+                "la_year_3": "10,20",
+                "la_year_4": "10,20",
+                "la_year_5": "10,20"
+            },
+            "lt": "20,40",
+            "lt_class": {
+                "lt_year_1": "5,10",
+                "lt_year_2": "5,10",
+                "lt_year_3": "5,10",
+                "lt_year_4": "5,10"
+            },
+            "lt2": "10,25",
+            "lt2_class": {
+                "lt2_year_3": "10,20",
+                "lt2_year_4": "10,20"
+            }
+        },
+        "master": "3,3",
+        "master_department": {
+            "mep": "200",
+            "mep_class": {
+                "mep_year_1": "200",
+                "mep_year_2": "200"
+            },
+            "murp": "200",
+            "murp_class": {
+                "murp_year_1": "200",
+                "murp_year_2": "200"
+            }
+        },
+        "doctor": "200"
+    }
+}

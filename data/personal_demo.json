@@ -1,0 +1,29 @@
+{
+    "personals": {
+        "personal": 500,
+        "teacher": 300,
+        "teacher_degree": {
+            "doctor": 100,
+            "master": 200,
+            "bechelor": 100,
+            "professor": 100,
+            "assoc_prof": 100,
+            "assist_prof": 100,
+            "none": 100
+        },
+        "officer": 200,
+        "officer_degree": {
+            "doctor": 100,
+            "master": 120,
+            "bechelor": 500,
+            "under_bechelor": 300,
+            "chief": 200,
+            "operating": 1400,
+            "none": 2400
+        },
+        "personal_type": {
+            "university_employee": 120,
+            "department_employee": 120
+        }
+    }
+}
