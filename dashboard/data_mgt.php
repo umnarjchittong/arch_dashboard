@@ -101,7 +101,7 @@ if (isset($_GET["p"]) && $_GET["p"] == "act_update") {
     $fnc->debug_console("activity", $_SESSION["data"]["activity"]);
 }
 if (isset($_GET["p"]) && $_GET["p"] == "actstd_update") {
-    $_SESSION["data"]["activity_student"] = act_api_update();
+    $_SESSION["data"]["activity_student"] = act_student_api_update();
     $fnc->debug_console("activity_student", $_SESSION["data"]["activity_student"]);
 }
 if (isset($_GET["p"]) && $_GET["p"] == "congrated_update") {
@@ -412,21 +412,20 @@ function act_api_update($year = null)
 
 function act_student_api_update($year = null)
 {
+    $fnc = new CommonFnc();
     $API = new MJU_API();
-    if (!$year) {
-        $year = 2565;
-    }
 
-    $api_url = "https://api.mju.ac.th/Activity/API/ACTIVITY10ccf8b71be54adcbe1ac4462c07750e23052020/Student/" . $year . "/303";
+    // $api_url = "https://api.mju.ac.th/Activity/API/ACTIVITY10ccf8b71be54adcbe1ac4462c07750e23052020/Student/" . $year . "/303";
+    $api_url = "https://api.mju.ac.th/Activity/API/ACTIVITY10ccf8b71be54adcbe1ac4462c07750e23052020/Student/Range/" . $fnc->get_fiscal_year() . "/303";
     $data_array = $API->GetAPI_array($api_url);
 
 
     echo '<a href="?p=actstd_read">Read Activity Student data</a>';
-    echo '<hr><h3>DATA ARRAY</h3><pre>';
+    echo '<hr><h3>DATA ACT Student Range ARRAY</h3><pre>';
     print_r($data_array);
     echo '</pre>';
 
-    json_write($data_array, '../data/activity.json', true);
+    json_write($data_array, '../data/activity_student.json', true);
 
     return $data_array;
 }

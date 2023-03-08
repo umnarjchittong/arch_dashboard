@@ -6,150 +6,46 @@ include('../core.php');
 $fnc = new CommonFnc;
 $fnc_json = new Fnc_json_service;
 $fnc_chartjs = new Fnc_ChartJS;
+$jsonQ = new jsonQuery();
 
 include('main.php');
 
-if (!isset($_SESSION["data"]["kpi"]) || (isset($_GET["data_refresh"]) && $_GET["data_refresh"])) {
-    $_SESSION["data"]["kpi"] = $fnc_json->json_read('../data/kpi.json');
+if (!isset($_SESSION["data"]["student_act"]) || (isset($_GET["data_refresh"]) && $_GET["data_refresh"])) {
+    $_SESSION["data"]["std_act"] = $fnc_json->json_read('../data/activity_student.json');
 }
-$fnc->debug_console("KPI's: ", $_SESSION["data"]["kpi"]);
+$fnc->debug_console("KPI's: ", $_SESSION["data"]["std_act"]);
 
-function gen_kpi_tbl_dimention($kpi_dimension)
+function gen_tbl($array_data)
 {
+    global $fnc;
     $jsonQ = new jsonQuery();
     // echo 'kpi_dimension<pre>';
     // print_r($kpi_dimension);
     // echo '</pre>';
 ?>
-    <h6 clsss="text-sm" style="padding-left: 2em"><?= $kpi_dimension["name"] ?></h6>
     <table class="table align-items-center mb-3">
-        <?php
-        foreach ($kpi_dimension["KpiDimension"] as $kpi_group) {
-        ?>
-            <thead>
-                <tr>
-                    <td colspan="6" style="padding-left:5em;" class="text-sm fw-bold pt-5"><?= $kpi_group["name"] ?></td>
-                </tr>
-                <tr>
-                    <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">ตัวชี้วัด</th>
-                    <!-- <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 ps-2">เกณฑ์</th> -->
-                    <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder opacity-7">ค่าน้ำหนัก</th>
-                    <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder opacity-7">ผลดำเนินการ/เป้าหมาย</th>
-                    <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder opacity-7">คะแนน</th>
-                </tr>
-            </thead>
-            <tbody class="mb-5">
-                <?php foreach ($kpi_group["kpiGroup"] as $item) { ?>
-                    <tr>
-                        <td class="align-top text-wrap">
-                            <div class="px-2 py-1">
-                                <h6 class="mb-0 text-sm fw-normal"><?= $item["name"] ?></h6>
-                            </div>
-                        </td>
-                        <td class="align-top d-none">
-                            <ol class="px-2 py-1">
-                                <?php for ($i = 1; $i <= 5; $i++) {
-                                    echo '<li class="mb-0 text-sm">' . $item["criterion" . $i] . '</li>';
-                                } ?>
-                            </ol>
-                        </td>
-                        <td class="text-center text-sm align-top">
-                            <span class="text-xs font-weight-bold"><?= $item["weight"] ?></span>
-                        </td>
-                        <td class="align-top">
-                            <div class="progress-wrapper w-75 mx-auto">
-                                <div class="progress-info">
-                                    <div class="progress-percentage">
-                                        <span class="text-xs font-weight-bold"><?= $item["result"] . " / " . $item["goal"] ?></span>
-                                    </div>
-                                </div>
-                                <?php
-                                $percentage = number_format(($item["result"] / $item["goal"]) * 100, 0);
-                                if ($percentage > 100) {
-                                    $percentage = 100;
-                                }
-                                ?>
-                                <div class="progress">
-                                    <div class="progress-bar bg-gradient-info w-<?= $percentage ?>" role="progressbar" aria-valuenow="<?= $percentage ?>" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="align-top text-center text-sm">
-                            <span class="text-xs font-weight-bold"><?= $item["resultWithCriterion"] ?></span>
-                        </td>
-                    </tr>
-                <?php } ?>
-            </tbody>
-
-            <!-- <tfoot>
-                <tr>
-                    <td colspan="6">&nbsp;</td>
-                </tr>
-            </tfoot> -->
-
-        <?php
-            // echo 'kpi_dimension<pre>';
-            // print_r($kpi_group["name"]);
-            // echo '</pre>';
-            // echo '<div class="card-title ms-4" style="padding-left: 3em">' . $kpi_group["name"] . '</div>';
-            // echo '<div class="table-responsive">';
-            // gen_kpi_tbl_kpi($kpi_group["kpiGroup"]);
-            // echo '</div>';
-        }
-        ?>
-    </table>
-<?php
-}
-
-function gen_kpi_tbl_kpi($kpi_item)
-{
-?>
-    <table class="table align-items-center mb-0">
         <thead>
             <tr>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">name</th>
-                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">criterion</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">weight</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">goal</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">result</th>
-                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">score</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">กิจกรรม</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 d-none d-lg-table-cell">กำหนดการ / สถานที่</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">ประเภทกิจกรรม / หมวดหมู่</th>
             </tr>
         </thead>
-        <tbody>
-            <?php foreach ($kpi_item as $item) { ?>
+        <tbody class="mb-5">
+            <?php
+            foreach ($array_data as $row) {
+            ?>
                 <tr>
-                    <td class="text-top">
+                    <td class="align-top text-wrap pt-4">
                         <div class="px-2 py-1">
-                            <h6 class="mb-0 text-sm"><?= $item["name"] ?></h6>
+                            <h6 class="mb-0 text-sm fw-normal"><?= $row["name"] ?></h6>
                         </div>
                     </td>
-                    <td>
-                        <ul class="px-2 py-1">
-                            <?php for ($i = 1; $i <= 5; $i++) {
-                                echo '<li class="mb-0 text-sm">' . $item["criterion" . $i] . '</li>';
-                            } ?>
-                        </ul>
+                    <td class="text-sm align-top text-wrap pt-4 d-none d-lg-table-cell">
+                        <span class="text-xs"><?= $fnc->gen_date_range_semi_th($row["satrtedDate"]) ?> - <?= $fnc->gen_date_range_semi_th($row["endedDate"]) ?><br><?= $row["location"] ?></span>
                     </td>
-                    <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"><?= $item["weight"] ?></span>
-                    </td>
-                    <td class="align-middle">
-                        <div class="progress-wrapper w-75 mx-auto">
-                            <div class="progress-info">
-                                <div class="progress-percentage">
-                                    <span class="text-xs font-weight-bold"><?= $item["result"] . " / " . $item["goal"] ?></span>
-                                </div>
-                            </div>
-                            <div class="progress">
-                                <div class="progress-bar bg-gradient-info w-60" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold">result</span>
-                    </td>
-                    <td class="align-middle text-center text-sm">
-                        <span class="text-xs font-weight-bold"><?= $item["resultWithCriterion"] ?></span>
+                    <td class="text-sm align-top pt-4">
+                        <span class="text-xs"><?= $row["typeName"] . "<br>" . $row["categoryName"] ?></span>
                     </td>
                 </tr>
             <?php } ?>
@@ -158,65 +54,40 @@ function gen_kpi_tbl_kpi($kpi_item)
 <?php
 }
 
-
-function gen_kpi_table($data_kpi)
+function gen_data_table($data_array)
 {
     $fnc = new CommonFnc();
     $jsonQ = new jsonQuery();
-    global $fiscal;
+    global $edu_year;
     // echo '<pre>';
-    // print_r($data_kpi);
+    // print_r($data_array);
     // echo '</pre>';
-    
+
 ?>
     <div class="card">
         <div class="card-header pb-0">
             <div class="row">
                 <div class="col-lg-6 col-6 mt-2">
-                    <h5>KPI's <span class="font-weight-bold ms-1">ปีงบประมาณ <?= $fiscal ?></span></h5>
+                    <h5>กิจกรรมนักศึกษา <span class="font-weight-bold ms-1">ปีการศึกษา <?= $edu_year ?></span></h5>
                 </div>
                 <div class="col-lg-6 col-6 my-auto text-end">
                     <div class="d-flex justify-content-end">
                         <div class="btn-group me-3">
                             <button type="button" class="btn btn-outline-secondary dropdown-toggle p-2 pe-4 fs-6 fw-normal" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                                <?= 'ปีงบประมาณ ' . $fiscal; ?>
+                                <?= 'ปีการศึกษา ' . $edu_year; ?>
                             </button>
                             <!-- <a class="cursor-pointer dropdown-toggle" id="dropdownTable" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                             <i class="bi bi-three-dots-vertical"></i>
                         </a> -->
                             <ul class="dropdown-menu dropdown-menu-lg-end shadow">
-                                <?php 
-                                for ($f=$fnc->get_fiscal_year(); $f>=2564; $f--) {
+                                <?php
+                                for ($f = $fnc->get_education_year(); $f >= 2561; $f--) {
                                     echo '
                                 <li><a class="dropdown-item border-radius-md';
                                     if (isset($_GET["y"]) && $f == $_GET["y"]) {
                                         echo ' active" aria-current="true';
                                     }
-                                    echo '" href="?y=' . $f . '&dimension=' . $_GET["dimension"] . '">ปีงบประมาณ' . $f . '</a></li>';
-                                }
-                                ?>
-                            </ul>
-                        </div>
-                        <div class="btn-group">
-                            <button type="button" class="btn btn-outline-secondary dropdown-toggle p-2 pe-4 fs-6 fw-normal" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                                <?php if (isset($_GET["dimension"]) && $_GET["dimension"] != '') {
-                                    print_r($jsonQ->where($data_kpi, "kpiDimensionID = " . $_GET["dimension"])[0]["name"]);
-                                } else {
-                                    echo 'เลือกมิติตัวชี้วัด';
-                                }
-                                ?>
-                            </button>
-                            <!-- <a class="cursor-pointer dropdown-toggle" id="dropdownTable" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                            <i class="bi bi-three-dots-vertical"></i>
-                        </a> -->
-                            <ul class="dropdown-menu dropdown-menu-lg-end shadow">
-                                <?php foreach ($data_kpi as $kpi_dimension) {
-                                    echo '
-                                <li><a class="dropdown-item border-radius-md';
-                                    if (isset($_GET["dimension"]) && $kpi_dimension["kpiDimensionID"] == $_GET["dimension"]) {
-                                        echo ' active" aria-current="true';
-                                    }
-                                    echo '" href="?y=' . $fiscal . '&dimension=' . $kpi_dimension["kpiDimensionID"] . '">' . $kpi_dimension["name"] . '</a></li>';
+                                    echo '" href="?y=' . $f . '">ปีการศึกษา ' . $f . '</a></li>';
                                 }
                                 ?>
                             </ul>
@@ -229,10 +100,8 @@ function gen_kpi_table($data_kpi)
         <div class="card-body px-2 pb-2">
 
             <?php
-            if (isset($_GET["dimension"]) && $_GET["dimension"] != "") {
-                $kpi_dimension = $jsonQ->where($data_kpi, "kpiDimensionID = " . $_GET["dimension"]);
-                gen_kpi_tbl_dimention($kpi_dimension[0]);
-            } ?>
+            gen_tbl($data_array);
+            ?>
         </div>
     </div>
 <?php
@@ -275,15 +144,16 @@ function gen_kpi_table($data_kpi)
             <?php
             // $y = 2564;
             if (isset($_GET["y"]) && $_GET["y"] != '') {
-                $fiscal = $_GET["y"];
+                $edu_year = $_GET["y"];
             } else {
-                $fiscal = $fnc->get_fiscal_year();
+                $edu_year = $fnc->get_education_year();
             }
-            $data_kpi = $_SESSION["data"]["kpi"][$fiscal];
+            // $data_kpi = $_SESSION["data"]["std_act"][$fiscal];
+            $data_std_act = $jsonQ->where($_SESSION["data"]["std_act"], "startedYear = " . $edu_year);
 
 
             echo '<div class="my-4">';
-            gen_kpi_table($data_kpi);
+            gen_data_table($data_std_act);
             echo '</div>';
 
             // echo '<h1>ปีงบประมาณ ' . $y . '</h1>';
