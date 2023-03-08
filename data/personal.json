@@ -1,24 +1,26 @@
 {
     "personals": 51,
+    "on_education": 4,
     "teacher": 35,
     "teacher_degree": {
         "doctor": 13,
         "master": 22,
-        "bechelor": 0,
+        "bachelor": 0,
         "professor": 0,
         "assoc_prof": 4,
         "assist_prof": 14,
-        "none": 17
+        "teacher": 17
     },
     "officer": 16,
     "officer_degree": {
         "doctor": 0,
         "master": 10,
-        "bechelor": 4,
-        "under_bechelor": 2,
-        "none": 3,
-        "operating": 9,
-        "chief": 4
+        "bachelor": 4,
+        "under_bachelor": 2,
+        "manager": 1,
+        "chief": 2,
+        "operating": 10,
+        "none": 3
     },
     "personal_type": {
         "university_employee": 13,

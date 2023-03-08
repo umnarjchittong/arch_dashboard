@@ -57,6 +57,10 @@ $API = new MJU_API;
             // echo '</pre>';
         }
 
+        $api_url= "https://api.mju.ac.th/Student/API/STUDENTe8ee4f3759cc4763a8f231965a2da6db23052020/2565/Faculty/12";
+        $API->get_api_info("ECON", $api_url);
+
+
 
 
         ?>

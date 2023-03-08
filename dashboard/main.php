@@ -3,7 +3,7 @@
 function panel_personal_info_card($title, $val, $percent, $icon)
 {
 ?>
-    <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+    <div class="col mb-4">
         <div class="card">
             <div class="card-body p-3">
                 <div class="row">
@@ -29,17 +29,66 @@ function panel_personal_info_card($title, $val, $percent, $icon)
 <?php
 }
 
-function panel_personal_info()
+function panel_personal_info($data_array)
 {
+    // if (!is_array($data_array)) {
+    //     // $data_array = $_SESSION["data"]["on_education"];
+    // }
+    // $in_study = 3;
 ?>
-    <div class="row">
-        <?php panel_personal_info_card("บุลากรทั้งหมด", "51", "100%", "ni ni-money-coins"); ?>
-        <?php panel_personal_info_card("ลาศึกษาต่อ", "3", "6%", "ni ni-world"); ?>
-        <?php panel_personal_info_card("น.ศ.ทั้งหมด", "300", "100%", "ni ni-paper-diploma"); ?>
-        <?php panel_personal_info_card("น.ศ.ตกค้าง", "10", "3%", "ni ni-cart"); ?>
+    <div class="row row-cols-4 mb-3">
+        <?php panel_personal_info_card("บุคลากรทั้งหมด", $data_array["personals"], "100%", "ni ni-money-coins"); ?>
+        <?php panel_personal_info_card("สายวิชาการ", $data_array["teacher"], number_format((($data_array["teacher"] * 100) / $data_array["personals"]), 2) . "%", "ni ni-world"); ?>
+        <?php panel_personal_info_card("สายสนับสนุน", $data_array["officer"], number_format((($data_array["officer"] * 100) / $data_array["personals"]), 2) . "%", "ni ni-paper-diploma"); ?>
+        <?php panel_personal_info_card("ลาศึกษาต่อ", $data_array["on_education"], number_format((($data_array["on_education"] * 100) / $data_array["personals"]), 2) . "%", "ni ni-cart"); ?>
     </div>
+<?php
+}
 
+function panel_personal_teacher_degree($data_array)
+{
+    if (!is_array($data_array)) {
+        // $data_array = $_SESSION["data"]["personal"];
+    }
+    $in_study = 3;
+?>
+    <div class="row row-cols-3 mb-3">
+        <?php panel_personal_info_card("สายวิชาการวุฒิ<br>ป.เอก", $data_array["teacher_degree"]["doctor"], number_format((($data_array["teacher_degree"]["doctor"] * 100) / $data_array["teacher"]), 2) . "%", "ni ni-world"); ?>
+        <?php panel_personal_info_card("สายวิชาการวุฒิ<br>ป.โท", $data_array["teacher_degree"]["master"], number_format((($data_array["teacher_degree"]["master"] * 100) / $data_array["teacher"]), 2) . "%", "ni ni-world"); ?>
+        <?php panel_personal_info_card("สายวิชาการวุฒิ<br>ป.ตรี", $data_array["teacher_degree"]["bachelor"], number_format((($data_array["teacher_degree"]["bachelor"] * 100) / $data_array["teacher"]), 2) . "%", "ni ni-world"); ?>
+    </div>
+<?php
+}
 
+function panel_personal_teacher_position($data_array)
+{
+    if (!is_array($data_array)) {
+        // $data_array = $_SESSION["data"]["personal"];
+    }
+    $in_study = 3;
+?>
+    <div class="row row-cols-4 mb-3">
+        <?php panel_personal_info_card("ตำแหน่ง ศ.", $data_array["teacher_degree"]["professor"], number_format((($data_array["teacher_degree"]["professor"] * 100) / $data_array["teacher"]), 2) . "%", "ni ni-money-coins"); ?>
+        <?php panel_personal_info_card("ตำแหน่ง รศ.", $data_array["teacher_degree"]["assoc_prof"], number_format((($data_array["teacher_degree"]["assoc_prof"] * 100) / $data_array["teacher"]), 2) . "%", "ni ni-world"); ?>
+        <?php panel_personal_info_card("ตำแหน่ง ผศ.", $data_array["teacher_degree"]["assist_prof"], number_format((($data_array["teacher_degree"]["assist_prof"] * 100) / $data_array["teacher"]), 2) . "%", "ni ni-world"); ?>
+        <?php panel_personal_info_card("ตำแหน่ง อ.", $data_array["teacher_degree"]["none"], number_format((($data_array["teacher_degree"]["none"] * 100) / $data_array["teacher"]), 2) . "%", "ni ni-world"); ?>
+    </div>
+<?php
+}
+
+function panel_personal_officer_degree($data_array)
+{
+    if (!is_array($data_array)) {
+        // $data_array = $_SESSION["data"]["personal"];
+    }
+    $in_study = 3;
+?>
+    <div class="row row-cols-4 mb-3">
+        <?php panel_personal_info_card("สายสนับสนุน<br>ป.เอก", $data_array["officer_degree"]["doctor"], number_format((($data_array["officer_degree"]["doctor"] * 100) / $data_array["officer"]), 2) . "%", "ni ni-world"); ?>
+        <?php panel_personal_info_card("สายสนับสนุน<br>ป.โท", $data_array["officer_degree"]["master"], number_format((($data_array["officer_degree"]["master"] * 100) / $data_array["officer"]), 2) . "%", "ni ni-world"); ?>
+        <?php panel_personal_info_card("สายสนับสนุน<br>ป.ตรี", $data_array["officer_degree"]["bachelor"], number_format((($data_array["officer_degree"]["bachelor"] * 100) / $data_array["officer"]), 2) . "%", "ni ni-world"); ?>
+        <?php panel_personal_info_card("สายสนับสนุน<br>อื่นๆ", $data_array["officer_degree"]["under_bachelor"], number_format((($data_array["officer_degree"]["under_bachelor"] * 100) / $data_array["officer"]), 2) . "%", "ni ni-world"); ?>
+    </div>
 <?php
 }
 
@@ -454,6 +503,27 @@ function sale_sample()
             <p class="text-sm">
                 <i class="fa fa-arrow-up text-success"></i>
                 <span class="font-weight-bold">4% more</span> in 2021
+            </p>
+        </div>
+        <div class="card-body p-3">
+            <div class="chart">
+                <canvas id="chart-line" class="chart-canvas" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+
+<?php
+}
+
+function line_chart_personal_retire()
+{
+?>
+    <div class="card z-index-2">
+        <div class="card-header pb-0">
+            <h6>Personal Retire Info</h6>
+            <p class="text-sm">
+                <i class="fa fa-arrow-up text-success"></i>
+                <span class="font-weight-bold">Range 10 Yrs</span>
             </p>
         </div>
         <div class="card-body p-3">

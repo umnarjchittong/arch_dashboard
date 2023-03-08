@@ -39,7 +39,7 @@ include ('main.php');
     <!-- End Navbar -->
 
     <div class="container-fluid py-4">
-      <?php panel_personal_info(); ?>
+      <?php ?>
       <div class="row mt-4">
         <div class="col-lg-7 mb-lg-0 mb-4">
           <?php card_1() ?>
