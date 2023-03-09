@@ -10,10 +10,10 @@ $jsonQ = new jsonQuery();
 
 include('main.php');
 
-if (!isset($_SESSION["data"]["student_act"]) || (isset($_GET["data_refresh"]) && $_GET["data_refresh"])) {
-    $_SESSION["data"]["std_act"] = $fnc_json->json_read('../data/activity_student.json');
+if (!isset($_SESSION["data"]["journal"]) || (isset($_GET["data_refresh"]) && $_GET["data_refresh"])) {
+    $_SESSION["data"]["journal"] = $fnc_json->json_read('../data/journal.json');
 }
-$fnc->debug_console("KPI's: ", $_SESSION["data"]["std_act"]);
+$fnc->debug_console("journal: ", $_SESSION["data"]["journal"]);
 
 function gen_tbl($array_data)
 {
@@ -26,26 +26,29 @@ function gen_tbl($array_data)
     <table class="table align-items-center mb-3">
         <thead>
             <tr>
-                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">กิจกรรม</th>
-                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 d-none d-lg-table-cell">กำหนดการ / สถานที่</th>
-                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">ประเภทกิจกรรม / หมวดหมู่</th>
+                <th class="text-center text-uppercase text-secondary text-sm font-weight-bolder opacity-6">#</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-6">บทความ</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-6 d-none d-lg-table-cell">วันที่ตีพิมพ์ / สำนักพิมพ์</th>
             </tr>
         </thead>
         <tbody class="mb-5">
             <?php
+            $x = 0;
             foreach ($array_data as $row) {
+                $x++;
             ?>
                 <tr>
-                    <td class="align-top text-wrap pt-4">
+                    <td class="text-center align-top fw-bold pt-3">
+                        <?= $x ?>
+                    </td>
+                    <td class="align-top text-wrap pt-3">
                         <div class="px-2 py-1">
-                            <h6 class="mb-0 text-sm fw-normal"><?= $row["name"] ?></h6>
+                            <h6 class="mb-0 text-sm fw-normal"><?= $row["nameTh"] ?></h6>
                         </div>
                     </td>
-                    <td class="text-sm align-top text-wrap pt-4 d-none d-lg-table-cell">
-                        <span class="text-xs"><?= $fnc->gen_date_range_semi_th($row["satrtedDate"]) ?> - <?= $fnc->gen_date_range_semi_th($row["endedDate"]) ?><br><?= $row["location"] ?></span>
-                    </td>
-                    <td class="text-sm align-top pt-4">
-                        <span class="text-xs"><?= $row["typeName"] . "<br>" . $row["categoryName"] ?></span>
+                    <td class="text-sm align-top text-nowrap pt-3 d-none d-lg-table-cell">
+                        <span class="text-xs"><?= $fnc->get_date_semi_th($row["publishedDate"]) ?></span><br>
+                        <span class="text-xs"><?= $row["publicationName"] ?></span>
                     </td>
                 </tr>
             <?php } ?>
@@ -54,40 +57,41 @@ function gen_tbl($array_data)
 <?php
 }
 
-function gen_data_table($data_array)
+function gen_data_table()
 {
     $fnc = new CommonFnc();
     $jsonQ = new jsonQuery();
-    global $edu_year;
+    global $year;
     // echo '<pre>';
     // print_r($data_array);
     // echo '</pre>';
+
 
 ?>
     <div class="card">
         <div class="card-header pb-0">
             <div class="row">
                 <div class="col-lg-6 col-6 mt-2">
-                    <h5>กิจกรรมนักศึกษา <span class="font-weight-bold ms-1">ปีการศึกษา <?= $edu_year ?></span></h5>
+                    <h5>งานวิจัย ตามปีงบประมาณที่ได้รับเงินสนับสนุน <span class="font-weight-bold ms-1">ปีงบประมาณ <?= $year ?></span></h5>
                 </div>
                 <div class="col-lg-6 col-6 my-auto text-end">
                     <div class="d-flex justify-content-end">
                         <div class="btn-group me-3">
                             <button type="button" class="btn btn-outline-secondary dropdown-toggle p-2 pe-4 fs-6 fw-normal" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                                <?= 'ปีการศึกษา ' . $edu_year; ?>
+                                <?= 'ปีงบประมาณ ' . $year; ?>
                             </button>
                             <!-- <a class="cursor-pointer dropdown-toggle" id="dropdownTable" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                             <i class="bi bi-three-dots-vertical"></i>
                         </a> -->
                             <ul class="dropdown-menu dropdown-menu-lg-end shadow">
                                 <?php
-                                for ($f = $fnc->get_education_year(); $f >= 2561; $f--) {
+                                for ($f = $fnc->get_fiscal_year(); $f >= ($fnc->get_fiscal_year() - 5); $f--) {
                                     echo '
                                 <li><a class="dropdown-item border-radius-md';
                                     if (isset($_GET["y"]) && $f == $_GET["y"]) {
                                         echo ' active" aria-current="true';
                                     }
-                                    echo '" href="?y=' . $f . '">ปีการศึกษา ' . $f . '</a></li>';
+                                    echo '" href="?y=' . $f . '">ปีงบประมาณ ' . $f . '</a></li>';
                                 }
                                 ?>
                             </ul>
@@ -100,7 +104,12 @@ function gen_data_table($data_array)
         <div class="card-body px-2 pb-2">
 
             <?php
-            gen_tbl($data_array);
+            if (array_key_exists($year, $_SESSION["data"]["journal"])) {
+                $data_array = $_SESSION["data"]["journal"][$year];
+                gen_tbl($data_array);
+            } else {
+                echo '<h3 class="text-center text-primary opacity-7 py-5">- ไม่พบข้อมูล -</h3>';
+            }
             ?>
         </div>
     </div>
@@ -144,17 +153,18 @@ function gen_data_table($data_array)
             <?php
             // $y = 2564;
             if (isset($_GET["y"]) && $_GET["y"] != '') {
-                $edu_year = $_GET["y"];
+                $year = $_GET["y"];
             } else {
-                $edu_year = $fnc->get_education_year();
+                $year = $fnc->get_fiscal_year();
             }
-            // $data_kpi = $_SESSION["data"]["std_act"][$fiscal];
-            $data_std_act = $jsonQ->where($_SESSION["data"]["std_act"], "startedYear = " . $edu_year);
-
-
+            // $data_kpi = $_SESSION["data"]["journal"][$fiscal];
+            // $data_journal = $jsonQ->where($_SESSION["data"]["journal"], "endedYear = " . $year);
+            // if (array_key_exists($year, $_SESSION["data"]["journal"])) {                
             echo '<div class="my-4">';
-            gen_data_table($data_std_act);
+            gen_data_table();
             echo '</div>';
+            // }
+
 
             // echo '<h1>ปีงบประมาณ ' . $y . '</h1>';
             // foreach ($data_kpi as $kpi) {

@@ -10,10 +10,34 @@ $jsonQ = new jsonQuery();
 
 include('main.php');
 
-if (!isset($_SESSION["data"]["student_act"]) || (isset($_GET["data_refresh"]) && $_GET["data_refresh"])) {
-    $_SESSION["data"]["std_act"] = $fnc_json->json_read('../data/activity_student.json');
+if (!isset($_SESSION["data"]["activity"]) || (isset($_GET["data_refresh"]) && $_GET["data_refresh"])) {
+    $_SESSION["data"]["activity"] = $fnc_json->json_read('../data/activity_student.json');
 }
-$fnc->debug_console("KPI's: ", $_SESSION["data"]["std_act"]);
+$fnc->debug_console("KPI's: ", $_SESSION["data"]["activity"]);
+
+function gen_typeName_distinct($array_data)
+{
+    $typename = array();
+    foreach ($array_data as $row) {
+        if (!strlen(array_search($row["typeName"], $typename))) {
+            array_push($typename, $row["typeName"]);
+        }
+    }
+    sort($typename);
+    // print_r($typename);
+    return $typename;
+}
+
+function gen_typeName_count($array_data, $typename)
+{
+    $jsonQ = new jsonQuery();
+    $typename_count = array();
+    foreach ($typename as $type) {
+        $typename_count[$type] = count($jsonQ->where($array_data, "typeName = " . $type));
+    }
+    // print_r($typename_count);
+    return $typename_count;
+}
 
 function gen_tbl($array_data)
 {
@@ -27,8 +51,9 @@ function gen_tbl($array_data)
         <thead>
             <tr>
                 <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">กิจกรรม</th>
-                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 d-none d-lg-table-cell">กำหนดการ / สถานที่</th>
-                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">ประเภทกิจกรรม / หมวดหมู่</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7 d-none d-lg-table-cell">กำหนดการ</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">ประเภทกิจกรรม / สถานที่</th>
+                <th class="text-uppercase text-secondary text-sm font-weight-bolder opacity-7">งบประมาณ</th>
             </tr>
         </thead>
         <tbody class="mb-5">
@@ -42,10 +67,13 @@ function gen_tbl($array_data)
                         </div>
                     </td>
                     <td class="text-sm align-top text-wrap pt-4 d-none d-lg-table-cell">
-                        <span class="text-xs"><?= $fnc->gen_date_range_semi_th($row["satrtedDate"]) ?> - <?= $fnc->gen_date_range_semi_th($row["endedDate"]) ?><br><?= $row["location"] ?></span>
+                        <span class="text-xs"><?php $fnc->gen_date_range_semi_th($row["satrtedDate"], $row["endedDate"]) ?></span>
                     </td>
                     <td class="text-sm align-top pt-4">
-                        <span class="text-xs"><?= $row["typeName"] . "<br>" . $row["categoryName"] ?></span>
+                        <span class="text-xs"><span class="fw-bold"><?= $row["typeName"] . "</span><br>" . $row["location"] ?></span>
+                    </td>
+                    <td class="text-center text-sm align-top pt-4">
+                        <span class="text-xs"><?= $row["budget"] ?></span>
                     </td>
                 </tr>
             <?php } ?>
@@ -68,26 +96,26 @@ function gen_data_table($data_array)
         <div class="card-header pb-0">
             <div class="row">
                 <div class="col-lg-6 col-6 mt-2">
-                    <h5>กิจกรรมนักศึกษา <span class="font-weight-bold ms-1">ปีการศึกษา <?= $edu_year ?></span></h5>
+                    <h5>กิจกรรมคณะฯ <span class="font-weight-bold ms-1">ปี พ.ศ. <?= $edu_year ?></span></h5>
                 </div>
                 <div class="col-lg-6 col-6 my-auto text-end">
                     <div class="d-flex justify-content-end">
                         <div class="btn-group me-3">
                             <button type="button" class="btn btn-outline-secondary dropdown-toggle p-2 pe-4 fs-6 fw-normal" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
-                                <?= 'ปีการศึกษา ' . $edu_year; ?>
+                                <?= 'ปี พ.ศ. ' . $edu_year; ?>
                             </button>
                             <!-- <a class="cursor-pointer dropdown-toggle" id="dropdownTable" data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                             <i class="bi bi-three-dots-vertical"></i>
                         </a> -->
                             <ul class="dropdown-menu dropdown-menu-lg-end shadow">
                                 <?php
-                                for ($f = $fnc->get_education_year(); $f >= 2561; $f--) {
+                                for ($f = (date("Y") + 543); $f >= 2563; $f--) {
                                     echo '
                                 <li><a class="dropdown-item border-radius-md';
                                     if (isset($_GET["y"]) && $f == $_GET["y"]) {
                                         echo ' active" aria-current="true';
                                     }
-                                    echo '" href="?y=' . $f . '">ปีการศึกษา ' . $f . '</a></li>';
+                                    echo '" href="?y=' . $f . '">ปี พ.ศ. ' . $f . '</a></li>';
                                 }
                                 ?>
                             </ul>
@@ -148,12 +176,11 @@ function gen_data_table($data_array)
             } else {
                 $edu_year = $fnc->get_education_year();
             }
-            // $data_kpi = $_SESSION["data"]["std_act"][$fiscal];
-            $data_std_act = $jsonQ->where($_SESSION["data"]["std_act"], "startedYear = " . $edu_year);
-
+            // $data_kpi = $_SESSION["data"]["activity"][$fiscal];
+            $data_activity = $jsonQ->where($_SESSION["data"]["activity"], "startedYear = " . $edu_year);
 
             echo '<div class="my-4">';
-            gen_data_table($data_std_act);
+            gen_data_table($data_activity);
             echo '</div>';
 
             // echo '<h1>ปีงบประมาณ ' . $y . '</h1>';
@@ -167,12 +194,21 @@ function gen_data_table($data_array)
             //     }
             // }
 
-
-            // if (!isset($_GET["dimension"]) || $_GET["dimension"] == "") {
-            //     echo '<div class="mt-5 py-5"></div>';
-            // }
-
             ?>
+
+
+            <div class="row row-cols-md-1  row-cols-lg-1 mt-4 mb-4 g-4">
+                <div class="col mb-lg-0 mb-4">
+                    <?php
+                    $typeName_lbl = gen_typeName_distinct($data_activity);
+                    $typeName_cnt = gen_typeName_count($data_activity, $typeName_lbl);
+                    $labels_array = $typeName_lbl;
+                    $data_array = $typeName_cnt;
+                    $fnc_chartjs->gen_Chart_Bar('ประเภทกิจกรรม', $labels_array, $data_array, 'act_chart1');
+                    ?>
+                </div>
+                
+            </div>
 
             <div class="row mt-4 d-none">
                 <div class="col-lg-5 mb-lg-0 mb-4">

@@ -44,10 +44,12 @@ function aside_gen_menu_item($label = "Dashboard", $icon = "bi bi-house", $url_p
             <?php aside_gen_menu_item("KPI's", "bi bi-speedometer", "../dashboard/", "kpi.php?y=" . $fnc->get_fiscal_year() . "&dimension=4"); ?>
             <?php aside_gen_menu_item("บุคลากร", "bi bi-person-square", "../dashboard/", "personal.php"); ?>
             <?php aside_gen_menu_item("การเงิน", "bi-currency-bitcoin", "../dashboard/", "finance.php"); ?>
-            <?php aside_gen_menu_item("งานวิจัย/บทความ", "bi-book", "../dashboard/", "research.php"); ?>
+            <?php aside_gen_menu_item("งานวิจัย", "bi-book", "../dashboard/", "research.php?y=2564"); ?>
+            <?php aside_gen_menu_item("บทความ", "bi-book", "../dashboard/", "journal.php?y=2564"); ?>
             <?php aside_gen_menu_item("กิจกรรมคณะ", "bi-book", "../dashboard/", "activity.php"); ?>
             <?php aside_gen_menu_item("นักศึกษา", "bi-mortarboard-fill", "../dashboard/", "student.php"); ?>
             <?php aside_gen_menu_item("กิจกรรม น.ศ.", "bi-book", "../dashboard/", "student_activity.php"); ?>            
+            <?php aside_gen_menu_item("ภาวะการมีงานทำ", "bi-book", "../dashboard/", "employ.php"); ?>            
             <li class="nav-item mt-3">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Sample pages</h6>
             </li>

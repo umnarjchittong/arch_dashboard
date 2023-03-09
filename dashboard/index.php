@@ -3,7 +3,7 @@
 
 <?php
 include ('../core.php');
-// $fnc = new CommonFnc;
+$fnc = new CommonFnc;
 
 include ('main.php');
 

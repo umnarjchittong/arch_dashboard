@@ -246,6 +246,12 @@ class CommonFnc extends Constants
         return $current_date["hours"] . ":" . $current_date["minutes"] . ":" . $current_date["seconds"] . " น.";
     }
 
+    /**
+     * It takes a date in the format of YYYY-MM-DD and returns a date in the format of DD MMM YY
+     * 
+     * @param current_date The date you want to convert. If you don't specify it, it will use the current
+     * date.
+     */
     public function get_date_semi_th($current_date = NULL)
     {
         if (!isset($current_date)) {
@@ -258,6 +264,13 @@ class CommonFnc extends Constants
         echo substr((date("Y", strtotime($current_date)) + 543), 2);
     }
 
+    /**
+     * It takes a start date and an end date and returns a string that represents the date range in a
+     * semi-thai format
+     * 
+     * @param start_date The start date of the event
+     * @param end_date The end date of the range.
+     */
     public function gen_date_range_semi_th($start_date, $end_date = "")
     {
         // echo date("M j, Y", strtotime($start_date));
@@ -272,10 +285,10 @@ class CommonFnc extends Constants
                         echo date("j", strtotime($start_date)) . date("-j", strtotime($end_date)) . " " . $this->month_name[date("n", strtotime($start_date))] . " " . (date("Y", strtotime($start_date)) + 543);
                     }
                 } else {
-                    echo date("j", strtotime($start_date)) . " " . $this->month_name[date("n", strtotime($start_date))] . "-" . date("j", strtotime($end_date)) . " " . $this->month_name[date("n", strtotime($start_date))] . " " . (date("Y", strtotime($start_date)) + 543);
+                    echo date("j", strtotime($start_date)) . " " . $this->month_name[date("n", strtotime($start_date))] . " - " . date("j", strtotime($end_date)) . " " . $this->month_name[date("n", strtotime($start_date))] . " " . (date("Y", strtotime($start_date)) + 543);
                 }
             } else {
-                echo date("j", strtotime($start_date)) . " " . $this->month_name[date("n", strtotime($start_date))] . " " . (date("Y", strtotime($start_date)) + 543) . "-" . date("j", strtotime($end_date)) . " " . $this->month_name[date("n", strtotime($end_date))] . " " . (date("Y", strtotime($end_date)) + 543);
+                echo date("j", strtotime($start_date)) . " " . $this->month_name[date("n", strtotime($start_date))] . " " . (date("Y", strtotime($start_date)) + 543) . " - " . date("j", strtotime($end_date)) . " " . $this->month_name[date("n", strtotime($end_date))] . " " . (date("Y", strtotime($end_date)) + 543);
             }
         }
     }
@@ -1131,6 +1144,11 @@ class jsonQuery
     <?php
     }
 
+    /**
+     * It takes an array of arrays and outputs a table.
+     * 
+     * @param data_array The array of data you want to display in the table.
+     */
     public function gen_table_array($data_array)
     {
         $col_title = array_keys($data_array[0]);
@@ -1352,7 +1370,7 @@ class Fnc_ChartJS extends CommonFnc
                     data: <?= json_encode($data_array) ?>,
                     backgroundColor: <?= json_encode($this->chart_bg_color) ?>,
                     borderColor: <?= json_encode($this->chart_bd_color) ?>,
-                    borderWidth: 1
+                    borderWidth: 2
                 }]
             };
             new Chart(Chart_<?= $element_id ?>, {
@@ -1366,6 +1384,12 @@ class Fnc_ChartJS extends CommonFnc
                                 stepSize: 2,
                                 precision: 0
                             }
+                        }
+                    },
+                    legend: {
+                        display: true,
+                        lable: {
+                            color: 'rgb(255, 99, 132)'
                         }
                     }
                 }
